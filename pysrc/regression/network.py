@@ -68,7 +68,7 @@ class OriginalNet(nn.Module):
 # acc_list = [0, 0, 1]
 # acc_numpy = np.array(acc_list)
 # ## trans param
-# resize = 224  #VGG16
+# resize = 224
 # mean = ([0.5, 0.5, 0.5])
 # std = ([0.5, 0.5, 0.5])
 # ## transform
