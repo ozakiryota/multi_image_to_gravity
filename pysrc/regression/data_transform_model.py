@@ -9,35 +9,35 @@ from torchvision import transforms
 
 class DataTransform():
     def __init__(self, resize, mean, std):
-        self.DataTransform = transforms.Compose([
+        self.img_transform = transforms.Compose([
             transforms.Resize(resize),
-            # transforms.CenterCrop(resize),
+            transforms.CenterCrop(resize),
             transforms.ToTensor(),
             transforms.Normalize(mean, std)
         ])
 
     def __call__(self, img_path_list, acc_numpy):
-        combined_img_pil = self.combineImages(img_path_list)
-        img_tensor = self.DataTransform(combined_img_pil)
+        combined_img_tensor = self.combineImages(img_path_list)
         acc_numpy = acc_numpy.astype(np.float32)
         acc_numpy = acc_numpy / np.linalg.norm(acc_numpy)
         acc_tensor = torch.from_numpy(acc_numpy)
 
-        return img_tensor, acc_tensor
+        return combined_img_tensor, acc_tensor
 
     def combineImages(self, img_path_list):
         for i in range(len(img_path_list)):
+            img_tensor = self.img_transform(Image.open(img_path_list[i]))
             if i == 0:
-                combined_img_pil = Image.open(img_path_list[i])
+                combined_img_tensor = img_tensor
             else:
-                combined_img_pil = self.getConcatH(combined_img_pil, Image.open(img_path_list[i]))
-        return combined_img_pil
+                combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
+        return combined_img_tensor
 
-    def getConcatH(self, img_l, img_r):
-        dst = Image.new('RGB', (img_l.width + img_r.width, img_l.height))
-        dst.paste(img_l, (0, 0))
-        dst.paste(img_r, (img_l.width, 0))
-        return dst
+    # def getConcatH(self, img_l, img_r):
+    #     dst = Image.new('RGB', (img_l.width + img_r.width, img_l.height))
+    #     dst.paste(img_l, (0, 0))
+    #     dst.paste(img_r, (img_l.width, 0))
+    #     return dst
 
 ##### test #####
 # ## trans param

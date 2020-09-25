@@ -14,7 +14,7 @@ class OriginalNet(nn.Module):
         vgg = models.vgg16(pretrained=use_pretrained)
         self.features = vgg.features
         self.fc = nn.Sequential(
-            nn.Linear(164864, 100),
+            nn.Linear(125440, 100),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.1),
             nn.Linear(100, 18),
