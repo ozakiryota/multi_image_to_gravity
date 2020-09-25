@@ -9,9 +9,9 @@ import torch.optim as optim
 from tensorboardX import SummaryWriter
 
 import make_datapath_list
-import data_transform
-import original_dataset
-import original_network
+import data_transform_model
+import dataset_model
+import network
 
 class TrainModel:
     def __init__(self,
@@ -19,13 +19,13 @@ class TrainModel:
             train_rootpath, val_rootpath, csv_name, batch_size,
             str_optimizer, lr_cnn, lr_fc,
             num_epochs):
-        setRandomCondition()
+        self.setRandomCondition()
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("self.device = ", self.device)
         self.data_transform = self.getDataTransform(mean_element, std_element)
         self.dataloaders_dict = self.getDataloader(train_rootpath, val_rootpath, csv_name, batch_size)
         self.net = self.getNetwork()
-        self.optimizer = getOptimizer(str_optimizer, lr_cnn, lr_fc)
+        self.optimizer = self.getOptimizer(str_optimizer, lr_cnn, lr_fc)
         self.num_epochs = num_epochs
         self.str_hyperparameter  = self.getStrHyperparameter(mean_element, std_element, str_optimizer, lr_cnn, lr_fc, batch_size)
 
@@ -41,19 +41,19 @@ class TrainModel:
         resize = 224
         mean = ([mean_element, mean_element, mean_element])
         std = ([std_element, std_element, std_element])
-        data_transform = data_transform.DataTransform(resize, mean, std)
+        data_transform = data_transform_model.DataTransform(resize, mean, std)
         return data_transform
 
     def getDataloader(self, train_rootpath, val_rootpath, csv_name, batch_size):
         ## list
-        train_list = make_datapath_list.make_datapath_list(train_rootpath, csv_name)
-        val_list = make_datapath_list.make_datapath_list(val_rootpath, csv_name)
+        train_list = make_datapath_list.makeDatapathList(train_rootpath, csv_name)
+        val_list = make_datapath_list.makeDatapathList(val_rootpath, csv_name)
         ## dataset
-        train_dataset = original_dataset.OriginalDataset(
+        train_dataset = dataset_model.OriginalDataset(
             data_list=train_list,
             transform=self.data_transform
         )
-        val_dataset = original_dataset.OriginalDataset(
+        val_dataset = dataset_model.OriginalDataset(
             data_list=val_list,
             transform=self.data_transform
         )
@@ -122,9 +122,9 @@ class TrainModel:
             ## phase
             for phase in ["train", "val"]:
                 if phase == "train":
-                    net.train()
+                    self.net.train()
                 else:
-                    net.eval()
+                    self.net.eval()
                 ## skip
                 if (epoch == 0) and (phase=="train"):
                     continue
@@ -139,7 +139,7 @@ class TrainModel:
                     with torch.set_grad_enabled(phase == "train"):  #compute grad only in "train"
                         ## forward
                         outputs = self.net(inputs)
-                        loss = computeLoss(outputs, labels)
+                        loss = self.computeLoss(outputs, labels)
                         ## backward
                         if phase == "train":
                             loss.backward()     #accumulate gradient to each Tensor
@@ -148,7 +148,7 @@ class TrainModel:
                         epoch_loss += loss.item() * inputs.size(0)
                         # print("loss.item() = ", loss.item())
                 ## average loss
-                epoch_loss = epoch_loss / len(dataloaders_dict[phase].dataset)
+                epoch_loss = epoch_loss / len(self.dataloaders_dict[phase].dataset)
                 print("{} Loss: {:.4f}".format(phase, epoch_loss))
                 ## record
                 if phase == "train":
@@ -188,7 +188,24 @@ class TrainModel:
         plt.show()
 
 def main():
-    train_model = TrainModel()
+    ## hyperparameters
+    mean_element = 0.5
+    std_element = 0.5
+    train_rootpath = "../../dataset_image_to_gravity/AirSim/5cam/train"
+    val_rootpath = "../../dataset_image_to_gravity/AirSim/5cam/val"
+    csv_name = "imu_camera.csv"
+    batch_size = 10
+    str_optimizer = "Adam"  #"SGD" or "Adam"
+    lr_cnn = 1e-5
+    lr_fc = 1e-4
+    num_epochs = 50
+    ## train
+    train_model = TrainModel(
+        mean_element, std_element,
+        train_rootpath, val_rootpath, csv_name, batch_size,
+        str_optimizer, lr_cnn, lr_fc,
+        num_epochs
+    )
     train_model.train()
 
 if __name__ == '__main__':

@@ -1,0 +1,9 @@
+weights/*
+runs
+graph/*
+
+mle
+mle_
+docker
+
+!.gitkeep

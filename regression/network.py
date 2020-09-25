@@ -5,7 +5,7 @@ import torch
 from torchvision import models
 import torch.nn as nn
 
-import data_transform
+import data_transform_model
 
 class OriginalNet(nn.Module):
     def __init__(self, use_pretrained=True):
@@ -72,7 +72,7 @@ class OriginalNet(nn.Module):
 # mean = ([0.5, 0.5, 0.5])
 # std = ([0.5, 0.5, 0.5])
 # ## transform
-# transform = data_transform.DataTransform(resize, mean, std)
+# transform = data_transform_model.DataTransform(resize, mean, std)
 # img_trans, _ = transform(img_path_list, acc_numpy)
 # ## prediction
 # inputs = img_trans.unsqueeze_(0)

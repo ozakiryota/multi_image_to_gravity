@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import torch
 
 import make_datapath_list
-import data_transform
-import dataset
+import data_transform_model
+import dataset_model
 
 def show_inputs(inputs):
     h = 5
@@ -34,13 +34,13 @@ mean = ([0.5, 0.5, 0.5])
 std = ([0.5, 0.5, 0.5])
 
 ## dataset
-train_dataset = dataset.OriginalDataset(
+train_dataset = dataset_model.OriginalDataset(
     data_list=train_list,
-    transform=data_transform.DataTransform(resize, mean, std)
+    transform=data_transform_model.DataTransform(resize, mean, std)
 )
-val_dataset = dataset.OriginalDataset(
+val_dataset = dataset_model.OriginalDataset(
     data_list=val_list,
-    transform=data_transform.DataTransform(resize, mean, std)
+    transform=data_transform_model.DataTransform(resize, mean, std)
 )
 
 # dataloader

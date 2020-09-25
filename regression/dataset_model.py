@@ -5,7 +5,7 @@ import numpy as np
 import torch
 
 import make_datapath_list
-import data_transform
+import data_transform_model
 
 class OriginalDataset(data.Dataset):
     def __init__(self, data_list, transform):
@@ -39,11 +39,11 @@ class OriginalDataset(data.Dataset):
 # ## dataset
 # train_dataset = OriginalDataset(
 #     data_list=train_list,
-#     transform=data_transform.DataTransform(resize, mean, std)
+#     transform=data_transform_model.DataTransform(resize, mean, std)
 # )
 # val_dataset = OriginalDataset(
 #     data_list=val_list,
-#     transform=data_transform.DataTransform(resize, mean, std)
+#     transform=data_transform_model.DataTransform(resize, mean, std)
 # )
 # ## print
 # index = 0
