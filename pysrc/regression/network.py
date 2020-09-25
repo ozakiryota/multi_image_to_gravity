@@ -58,11 +58,11 @@ class OriginalNet(nn.Module):
 # # print(list_fc_param_value)
 # ## image
 # img_path_list = [
-#     "../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",
-#     "../../dataset_image_to_gravity/AirSim/5cam/example/camera_72.jpg",
-#     "../../dataset_image_to_gravity/AirSim/5cam/example/camera_144.jpg",
-#     "../../dataset_image_to_gravity/AirSim/5cam/example/camera_216.jpg",
-#     "../../dataset_image_to_gravity/AirSim/5cam/example/camera_288.jpg"
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_72.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_144.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_216.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_288.jpg"
 # ]
 # ## label
 # acc_list = [0, 0, 1]

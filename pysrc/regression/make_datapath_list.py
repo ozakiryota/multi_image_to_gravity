@@ -13,7 +13,7 @@ def makeDatapathList(rootpath, csv_name):
     return data_list
 
 ##### test #####
-# rootpath = "../../dataset_image_to_gravity/AirSim/5cam/train"
+# rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
 # csv_name = "imu_camera.csv"
 # train_list = makeDatapathList(rootpath, csv_name)
 # # print(train_list)

@@ -22,8 +22,8 @@ def show_inputs(inputs):
     plt.show()
 
 ## list
-train_rootpath = "../../dataset_image_to_gravity/AirSim/5cam/train"
-val_rootpath = "../../dataset_image_to_gravity/AirSim/5cam/val"
+train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
+val_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
 csv_name = "imu_camera.csv"
 train_list = make_datapath_list.makeDatapathList(train_rootpath, csv_name)
 val_list = make_datapath_list.makeDatapathList(val_rootpath, csv_name)

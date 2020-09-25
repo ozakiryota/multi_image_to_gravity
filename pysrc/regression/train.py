@@ -112,7 +112,7 @@ class TrainModel:
         ## time
         start_clock = time.time()
         ## loss record
-        # writer = SummaryWriter(logdir="../runs")
+        # writer = SummaryWriter(logdir="../../runs")
         record_loss_train = []
         record_loss_val = []
         ## loop
@@ -172,7 +172,7 @@ class TrainModel:
         return loss
 
     def saveParam(self):
-        save_path = "../weights/" + self.str_hyperparameter + ".pth"
+        save_path = "../../weights/" + self.str_hyperparameter + ".pth"
         torch.save(self.net.state_dict(), save_path)
         print("Saved: ", save_path)
 
@@ -184,15 +184,15 @@ class TrainModel:
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
         plt.title("loss: train=" + str(record_loss_train[-1]) + ", val=" + str(record_loss_val[-1]))
-        graph.savefig("../graph/" + self.str_hyperparameter + ".jpg")
+        graph.savefig("../../graph/" + self.str_hyperparameter + ".jpg")
         plt.show()
 
 def main():
     ## hyperparameters
     mean_element = 0.5
     std_element = 0.5
-    train_rootpath = "../../dataset_image_to_gravity/AirSim/5cam/train"
-    val_rootpath = "../../dataset_image_to_gravity/AirSim/5cam/val"
+    train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
+    val_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
     csv_name = "imu_camera.csv"
     batch_size = 10
     str_optimizer = "Adam"  #"SGD" or "Adam"
