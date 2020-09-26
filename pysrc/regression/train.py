@@ -42,7 +42,6 @@ class TrainModel:
         mean = ([mean_element, mean_element, mean_element])
         std = ([std_element, std_element, std_element])
         if self.num_images > 0:
-            # data_transform = data_transform_model.DataTransform(resize, mean, std, num_images=self.num_images)
             data_transform = data_transform_model.DataTransform(resize, mean, std, self.num_images)
         else:
             data_transform = data_transform_model.DataTransform(resize, mean, std)
@@ -52,7 +51,7 @@ class TrainModel:
         ## list
         train_list = make_datapath_list.makeDatapathList(train_rootpath, csv_name)
         val_list = make_datapath_list.makeDatapathList(val_rootpath, csv_name)
-        ## number of input images
+        ## get number of input images
         if self.num_images < 0:
             self.num_images = len(train_list[0][3:])
         print("self.num_images = ", self.num_images)
@@ -202,6 +201,7 @@ def main():
     resize = 224
     mean_element = 0.5
     std_element = 0.5
+    num_images = -1
     train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
     val_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
     csv_name = "imu_camera.csv"
@@ -210,7 +210,6 @@ def main():
     lr_cnn = 1e-5
     lr_fc = 1e-4
     num_epochs = 50
-    num_images = -1
     ## train
     train_model = TrainModel(
         resize, mean_element, std_element, num_images,

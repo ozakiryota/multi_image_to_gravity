@@ -43,46 +43,53 @@ class Sample:
 
 class InferenceModel:
     def __init__(self,
-            mean_element, std_element,
+            resize, mean_element, std_element, num_images,
             rootpath, csv_name, batch_size,
             weights_path):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("self.device = ", self.device)
-        self.data_transform = self.getDataTransform(mean_element, std_element)
+        self.num_images = num_images
+        self.data_transform = self.getDataTransform(resize, mean_element, std_element)
         self.datapath_list = []
         self.dataloader = self.getDataloader(rootpath, csv_name, batch_size)
-        self.net = self.getNetwork(weights_path)
+        self.net = self.getNetwork(resize, weights_path)
         ## list
         self.list_samples = []
         self.list_inputs = []
         self.list_labels = []
         self.list_outputs = []
 
-    def getDataTransform(self, mean_element, std_element):
-        resize = 224
+    def getDataTransform(self, resize, mean_element, std_element):
         mean = ([mean_element, mean_element, mean_element])
         std = ([std_element, std_element, std_element])
-        data_transform = data_transform_model.DataTransform(resize, mean, std)
+        if self.num_images > 0:
+            data_transform = data_transform_model.DataTransform(resize, mean, std, self.num_images)
+        else:
+            data_transform = data_transform_model.DataTransform(resize, mean, std)
         return data_transform
 
     def getDataloader(self, rootpath, csv_name, batch_size):
         ## list
         self.datapath_list = make_datapath_list.makeDatapathList(rootpath, csv_name)
+        ## get number of input images
+        if self.num_images < 0:
+            self.num_images = len(self.datapath_list[0][3:])
+        print("self.num_images = ", self.num_images)
         ## dataset
-        train_dataset = dataset_model.OriginalDataset(
+        dataset = dataset_model.OriginalDataset(
             data_list=self.datapath_list,
             transform=self.data_transform
         )
         ## dataloader
         dataloader = torch.utils.data.DataLoader(
-            train_dataset,
+            dataset,
             batch_size=batch_size,
             shuffle=True
         )
         return dataloader
 
-    def getNetwork(self, weights_path):
-        net = network.OriginalNet(use_pretrained=False)
+    def getNetwork(self, resize, weights_path):
+        net = network.OriginalNet(self.num_images, resize=resize, use_pretrained=False)
         print(net)
         net.to(self.device)
         net.eval()
@@ -200,15 +207,17 @@ class InferenceModel:
 
 def main():
     ## hyperparameters
+    resize = 224
     mean_element = 0.5
     std_element = 0.5
+    num_images = -1
     rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
     csv_name = "imu_camera.csv"
     batch_size = 10
     weights_path = "../../weights/regression.pth"
     ## infer
     inference_model = InferenceModel(
-        mean_element, std_element,
+        resize, mean_element, std_element, num_images,
         rootpath, csv_name, batch_size,
         weights_path
     )
