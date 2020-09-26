@@ -4,6 +4,5 @@ graph/*
 
 pysrc/mle
 pysrc/mle_
-docker
 
 !.gitkeep
