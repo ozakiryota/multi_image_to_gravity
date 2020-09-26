@@ -8,8 +8,7 @@ import torch
 from torchvision import transforms
 
 class DataTransform():
-    def __init__(self, resize, mean, std, num_images=-1):
-        self.num_images = num_images
+    def __init__(self, resize, mean, std):
         self.img_transform = transforms.Compose([
             transforms.Resize(resize),
             transforms.CenterCrop(resize),
@@ -26,20 +25,12 @@ class DataTransform():
         return combined_img_tensor, acc_tensor
 
     def combineImages(self, img_path_list):
-        if self.num_images > 0:
-            for i in range(self.num_images):
-                img_tensor = self.img_transform(Image.open(img_path_list[i]))
-                if i == 0:
-                    combined_img_tensor = img_tensor
-                else:
-                    combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
-        else:
-            for i in range(len(img_path_list)):
-                img_tensor = self.img_transform(Image.open(img_path_list[i]))
-                if i == 0:
-                    combined_img_tensor = img_tensor
-                else:
-                    combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
+        for i in range(len(img_path_list)):
+            img_tensor = self.img_transform(Image.open(img_path_list[i]))
+            if i == 0:
+                combined_img_tensor = img_tensor
+            else:
+                combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
         return combined_img_tensor
 
     # def getConcatH(self, img_l, img_r):
