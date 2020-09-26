@@ -42,6 +42,7 @@ class TrainModel:
         mean = ([mean_element, mean_element, mean_element])
         std = ([std_element, std_element, std_element])
         if self.num_images > 0:
+            # data_transform = data_transform_model.DataTransform(resize, mean, std, num_images=self.num_images)
             data_transform = data_transform_model.DataTransform(resize, mean, std, self.num_images)
         else:
             data_transform = data_transform_model.DataTransform(resize, mean, std)

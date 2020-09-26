@@ -26,20 +26,14 @@ class DataTransform():
         return combined_img_tensor, acc_tensor
 
     def combineImages(self, img_path_list):
-        if self.num_images > 0:
-            for i in range(self.num_images):
-                img_tensor = self.img_transform(Image.open(img_path_list[i]))
-                if i == 0:
-                    combined_img_tensor = img_tensor
-                else:
-                    combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
-        else:
-            for i in range(len(img_path_list)):
-                img_tensor = self.img_transform(Image.open(img_path_list[i]))
-                if i == 0:
-                    combined_img_tensor = img_tensor
-                else:
-                    combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
+        if self.num_images < 0:
+            self.num_images = len(img_path_list)
+        for i in range(self.num_images):
+            img_tensor = self.img_transform(Image.open(img_path_list[i]))
+            if i == 0:
+                combined_img_tensor = img_tensor
+            else:
+                combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
         return combined_img_tensor
 
     # def getConcatH(self, img_l, img_r):

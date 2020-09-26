@@ -17,6 +17,10 @@ class OriginalNet(nn.Module):
             num_fc_in_features = 26112
         elif num_images == 5:
             num_fc_in_features = 125440
+        elif num_images == 1 and resize == 112:
+            num_fc_in_features = 4608
+        elif num_images == 1:
+            num_fc_in_features = 25088
         self.fc = nn.Sequential(
             nn.Linear(num_fc_in_features, 100),
             nn.ReLU(inplace=True),
@@ -55,32 +59,32 @@ class OriginalNet(nn.Module):
         return x
 
 ##### test #####
-## image
-img_path_list = [
-    "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",
-    "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_72.jpg",
-    "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_144.jpg",
-    "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_216.jpg",
-    "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_288.jpg"
-]
-## label
-acc_list = [0, 0, 1]
-acc_numpy = np.array(acc_list)
-## network
-net = OriginalNet(len(img_path_list))
-print(net)
-list_cnn_param_value, list_fc_param_value = net.getParamValueList()
-# print(list_fc_param_value)
-## trans param
-resize = 224
-# resize = 112
-mean = ([0.5, 0.5, 0.5])
-std = ([0.5, 0.5, 0.5])
-## transform
-transform = data_transform_model.DataTransform(resize, mean, std)
-img_trans, _ = transform(img_path_list, acc_numpy)
-## prediction
-inputs = img_trans.unsqueeze_(0)
-print("inputs.size() = ", inputs.size())
-outputs = net(inputs)
-print("outputs.size() = ", outputs.size())
+# ## image
+# img_path_list = [
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_72.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_144.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_216.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_288.jpg"
+# ]
+# ## label
+# acc_list = [0, 0, 1]
+# acc_numpy = np.array(acc_list)
+# ## network
+# net = OriginalNet(len(img_path_list))
+# print(net)
+# list_cnn_param_value, list_fc_param_value = net.getParamValueList()
+# # print(list_fc_param_value)
+# ## trans param
+# resize = 224
+# # resize = 112
+# mean = ([0.5, 0.5, 0.5])
+# std = ([0.5, 0.5, 0.5])
+# ## transform
+# transform = data_transform_model.DataTransform(resize, mean, std)
+# img_trans, _ = transform(img_path_list, acc_numpy)
+# ## prediction
+# inputs = img_trans.unsqueeze_(0)
+# print("inputs.size() = ", inputs.size())
+# outputs = net(inputs)
+# print("outputs.size() = ", outputs.size())
