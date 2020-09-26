@@ -15,19 +15,19 @@ import network
 
 class TrainModel:
     def __init__(self,
-            mean_element, std_element,
+            resize, mean_element, std_element,
             train_rootpath, val_rootpath, csv_name, batch_size,
             str_optimizer, lr_cnn, lr_fc,
             num_epochs):
         self.setRandomCondition()
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("self.device = ", self.device)
-        self.data_transform = self.getDataTransform(mean_element, std_element)
+        self.data_transform = self.getDataTransform(resize, mean_element, std_element)
         self.dataloaders_dict = self.getDataloader(train_rootpath, val_rootpath, csv_name, batch_size)
-        self.net = self.getNetwork()
+        self.net = self.getNetwork(resize)
         self.optimizer = self.getOptimizer(str_optimizer, lr_cnn, lr_fc)
         self.num_epochs = num_epochs
-        self.str_hyperparameter  = self.getStrHyperparameter(mean_element, std_element, str_optimizer, lr_cnn, lr_fc, batch_size)
+        self.str_hyperparameter  = self.getStrHyperparameter(resize, mean_element, std_element, str_optimizer, lr_cnn, lr_fc, batch_size)
 
     def setRandomCondition(self, keep_reproducibility=False):
         if keep_reproducibility:
@@ -37,8 +37,7 @@ class TrainModel:
             torch.backends.cudnn.deterministic = True
             torch.backends.cudnn.benchmark = False
 
-    def getDataTransform(self, mean_element, std_element):
-        resize = 224
+    def getDataTransform(self, resize, mean_element, std_element):
         mean = ([mean_element, mean_element, mean_element])
         std = ([std_element, std_element, std_element])
         data_transform = data_transform_model.DataTransform(resize, mean, std)
@@ -71,8 +70,8 @@ class TrainModel:
         dataloaders_dict = {"train": train_dataloader, "val": val_dataloader}
         return dataloaders_dict
 
-    def getNetwork(self):
-        net = network.OriginalNet()
+    def getNetwork(self, resize):
+        net = network.OriginalNet(resize=resize)
         print(net)
         net.to(self.device)
         return net
@@ -94,10 +93,11 @@ class TrainModel:
         print(optimizer)
         return optimizer
 
-    def getStrHyperparameter(self, mean_element, std_element, str_optimizer, lr_cnn, lr_fc, batch_size):
+    def getStrHyperparameter(self, resize, mean_element, std_element, str_optimizer, lr_cnn, lr_fc, batch_size):
         str_hyperparameter = "regression_" \
             + "train" + str(len(self.dataloaders_dict["train"].dataset)) \
             + "val" + str(len(self.dataloaders_dict["val"].dataset)) \
+            + "resize" + str(resize) \
             + "mean" + str(mean_element) \
             + "std" + str(std_element) \
             + str_optimizer \
@@ -189,6 +189,7 @@ class TrainModel:
 
 def main():
     ## hyperparameters
+    resize = 224
     mean_element = 0.5
     std_element = 0.5
     train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
@@ -201,7 +202,7 @@ def main():
     num_epochs = 50
     ## train
     train_model = TrainModel(
-        mean_element, std_element,
+        resize, mean_element, std_element,
         train_rootpath, val_rootpath, csv_name, batch_size,
         str_optimizer, lr_cnn, lr_fc,
         num_epochs

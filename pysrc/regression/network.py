@@ -8,20 +8,31 @@ import torch.nn as nn
 import data_transform_model
 
 class OriginalNet(nn.Module):
-    def __init__(self, use_pretrained=True):
+    def __init__(self, resize=224, use_pretrained=True):
         super(OriginalNet, self).__init__()
 
         vgg = models.vgg16(pretrained=use_pretrained)
         self.features = vgg.features
-        self.fc = nn.Sequential(
-            nn.Linear(125440, 100),
-            nn.ReLU(inplace=True),
-            nn.Dropout(p=0.1),
-            nn.Linear(100, 18),
-            nn.ReLU(inplace=True),
-            nn.Dropout(p=0.1),
-            nn.Linear(18, 3)
-        )
+        if resize == 112:
+            self.fc = nn.Sequential(
+                nn.Linear(26112, 100), #resize == 112
+                nn.ReLU(inplace=True),
+                nn.Dropout(p=0.1),
+                nn.Linear(100, 18),
+                nn.ReLU(inplace=True),
+                nn.Dropout(p=0.1),
+                nn.Linear(18, 3)
+            )
+        else:
+            self.fc = nn.Sequential(
+                nn.Linear(125440, 100), #resize == 224
+                nn.ReLU(inplace=True),
+                nn.Dropout(p=0.1),
+                nn.Linear(100, 18),
+                nn.ReLU(inplace=True),
+                nn.Dropout(p=0.1),
+                nn.Linear(18, 3)
+            )
 
     def getParamValueList(self):
         list_cnn_param_value = []
@@ -69,6 +80,7 @@ class OriginalNet(nn.Module):
 # acc_numpy = np.array(acc_list)
 # ## trans param
 # resize = 224
+# # resize = 112
 # mean = ([0.5, 0.5, 0.5])
 # std = ([0.5, 0.5, 0.5])
 # ## transform

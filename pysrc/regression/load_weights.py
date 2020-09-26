@@ -202,7 +202,7 @@ def main():
     ## hyperparameters
     mean_element = 0.5
     std_element = 0.5
-    rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
+    rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
     csv_name = "imu_camera.csv"
     batch_size = 10
     weights_path = "../../weights/regression.pth"
