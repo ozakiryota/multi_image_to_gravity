@@ -4,9 +4,6 @@ import numpy as np
 
 import torch
 
-import make_datapath_list
-import data_transform_model
-
 class OriginalDataset(data.Dataset):
     def __init__(self, data_list, transform):
         self.data_list = data_list
@@ -26,6 +23,8 @@ class OriginalDataset(data.Dataset):
         return img_trans, acc_trans
 
 ##### test #####
+# import make_datapath_list
+# import data_transform_model
 # ## list
 # train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
 # val_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"

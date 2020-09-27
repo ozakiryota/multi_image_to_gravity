@@ -5,8 +5,6 @@ import torch
 from torchvision import models
 import torch.nn as nn
 
-import data_transform_model
-
 class OriginalNet(nn.Module):
     def __init__(self, num_images, resize=224, use_pretrained=True):
         super(OriginalNet, self).__init__()
@@ -59,6 +57,7 @@ class OriginalNet(nn.Module):
         return x
 
 ##### test #####
+# import data_transform_model
 # ## image
 # img_path_list = [
 #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",

@@ -96,10 +96,10 @@ class InferenceModel:
         ## load
         if torch.cuda.is_available():
             loaded_weights = torch.load(weights_path)
-            print("Loaded: GPU -> GPU")
+            print("Loaded [GPU -> GPU]: ", weights_path)
         else:
             loaded_weights = torch.load(weights_path, map_location={"cuda:0": "cpu"})
-            print("Loaded: GPU -> CPU")
+            print("Loaded [GPU -> CPU]: ", weights_path)
         net.load_state_dict(loaded_weights)
         return net
 
