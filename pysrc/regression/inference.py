@@ -112,7 +112,7 @@ class InferenceModel:
             inputs = inputs.to(self.device)
             labels = labels.to(self.device)
             ## compute gradient
-            with torch.set_grad_enabled(False):  #compute grad only in "train"
+            with torch.set_grad_enabled(False):
                 ## forward
                 outputs = self.net(inputs)
                 loss_batch = self.computeLoss(outputs, labels)
