@@ -2,6 +2,7 @@ weights/*
 runs
 graph/*
 
-pysrc/mle
+pysrc/regression_multi_nn_inference
+pysrc/regression_test
 
 !.gitkeep
