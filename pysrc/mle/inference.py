@@ -8,21 +8,27 @@ import torch
 from torchvision import models
 import torch.nn as nn
 
-import make_datapath_list
-import data_transform_model
-import dataset_model
+import sys
+sys.path.append('../')
+
+from common import make_datapath_list
+from common import data_transform_model
+from common import dataset_model
 import network
+import criterion_model
 
 class Sample:
     def __init__(self,
             index,
-            inputs_path, inputs, label, mu,
+            inputs_path, inputs, label, mu, cov, mul_sigma,
             label_r, label_p, output_r, output_p, error_r, error_p):
         self.index = index              #int
         self.inputs_path = inputs_path  #list
         self.inputs = inputs            #ndarray
         self.label = label              #list
         self.mu = mu                    #list
+        self.cov = cov                  #ndarray
+        self.mul_sigma = mul_sigma      #float
         self.label_r = label_r          #float
         self.label_p = label_p          #float
         self.output_r = output_r        #float
@@ -37,6 +43,8 @@ class Sample:
         print("inputs.shape: ", self.inputs.shape)
         print("label: ", self.label)
         print("mu: ", self.mu)
+        print("cov: ", self.cov)
+        print("mul_sigma: ", self.mul_sigma)
         print("l_r[deg]: ", self.label_r/math.pi*180.0, ", l_p[deg]: ", self.label_p/math.pi*180.0)
         print("o_r[deg]: ", self.output_r/math.pi*180.0, ", o_p[deg]: ", self.output_p/math.pi*180.0)
         print("e_r[deg]: ", self.error_r/math.pi*180.0, ", e_p[deg]: ", self.error_p/math.pi*180.0)
@@ -58,6 +66,7 @@ class InferenceModel:
         self.list_inputs = []
         self.list_labels = []
         self.list_outputs = []
+        self.list_cov = []
 
     def getDataTransform(self, resize, mean_element, std_element):
         mean = ([mean_element, mean_element, mean_element])
@@ -115,7 +124,7 @@ class InferenceModel:
             with torch.set_grad_enabled(False):
                 ## forward
                 outputs = self.net(inputs)
-                loss_batch = self.computeLoss(outputs, labels)
+                loss_batch, cov = self.computeLossAndCov(outputs, labels)
                 ## add loss
                 loss_all += loss_batch.item() * inputs.size(0)
                 # print("loss_batch.item() = ", loss_batch.item())
@@ -123,11 +132,12 @@ class InferenceModel:
             self.list_inputs += list(inputs.cpu().detach().numpy())
             self.list_labels += labels.cpu().detach().numpy().tolist()
             self.list_outputs += outputs.cpu().detach().numpy().tolist()
+            self.list_cov += list(cov.cpu().detach().numpy())
         ## average loss
         loss_all = loss_all / len(self.dataloader.dataset)
         print("Loss: {:.4f}".format(loss_all))
         ## compute error
-        mae, var = self.computeAttitudeError()
+        mae, var, ave_mul_sigma = self.computeAttitudeError()
         ## sort
         self.sortSamples()
         ## show result & set graph
@@ -140,17 +150,21 @@ class InferenceModel:
         ## MAE & Var
         print("mae [deg] = ", mae)
         print("var [deg^2] = ", var)
+        ## average multiplied sigma
+        print("ave_mul_sigma [m^3/s^6] = ", ave_mul_sigma)
         ## graph
         plt.tight_layout()
         plt.show()
 
-    def computeLoss(self, outputs, labels):
-        criterion = nn.MSELoss()
-        loss = criterion(outputs, labels)
-        return loss
+    def computeLossAndCov(self, outputs, labels):
+        criterion = criterion_model.CriterionModel()
+        loss = criterion.computeLoss(outputs, labels, self.device)
+        cov = criterion.getCovMatrix(outputs)
+        return loss, cov
 
     def computeAttitudeError(self):
         list_errors = []
+        list_mul_sigma = []
         for i in range(len(self.list_labels)):
             ## error
             label_r, label_p = self.accToRP(self.list_labels[i])
@@ -158,10 +172,13 @@ class InferenceModel:
             error_r = self.computeAngleDiff(output_r, label_r)
             error_p = self.computeAngleDiff(output_p, label_p)
             list_errors.append([error_r, error_p])
+            ## multiplied sigma
+            mul_sigma = math.sqrt(self.list_cov[i][0, 0]) * math.sqrt(self.list_cov[i][1, 1]) * math.sqrt(self.list_cov[i][2, 2])
+            list_mul_sigma.append(mul_sigma)
             ## register
             sample = Sample(
                 i,
-                self.datapath_list[i][3:], self.list_inputs[i], self.list_labels[i], self.list_outputs[i],
+                self.datapath_list[i][3:], self.list_inputs[i], self.list_labels[i], self.list_outputs[i], self.list_cov[i], mul_sigma,
                 label_r, label_p, output_r, output_p, error_r, error_p
             )
             self.list_samples.append(sample)
@@ -169,7 +186,8 @@ class InferenceModel:
         print("arr_errors.shape = ", arr_errors.shape)
         mae = self.computeMAE(arr_errors/math.pi*180.0)
         var = self.computeVar(arr_errors/math.pi*180.0)
-        return mae, var
+        ave_mul_sigma = np.mean(list_mul_sigma, axis=0)
+        return mae, var, ave_mul_sigma
 
     def accToRP(self, acc):
         r = math.atan2(acc[1], acc[2])
@@ -215,7 +233,7 @@ def main():
     rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
     csv_name = "imu_camera.csv"
     batch_size = 10
-    weights_path = "../../weights/regression.pth"
+    weights_path = "../../weights/mle.pth"
     ## infer
     inference_model = InferenceModel(
         resize, mean_element, std_element, num_images,

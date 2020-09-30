@@ -152,13 +152,12 @@ class InferenceModel:
     def computeAttitudeError(self):
         list_errors = []
         for i in range(len(self.list_labels)):
-            ## error
             label_r, label_p = self.accToRP(self.list_labels[i])
             output_r, output_p = self.accToRP(self.list_outputs[i])
             error_r = self.computeAngleDiff(output_r, label_r)
             error_p = self.computeAngleDiff(output_p, label_p)
             list_errors.append([error_r, error_p])
-            ## register
+            ## input
             sample = Sample(
                 i,
                 self.datapath_list[i][3:], self.list_inputs[i], self.list_labels[i], self.list_outputs[i],
