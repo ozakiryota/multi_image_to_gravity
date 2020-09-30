@@ -206,9 +206,12 @@ class InferenceModel:
 
     def sortSamples(self):
         list_sum_error_rp = [abs(sample.error_r) + abs(sample.error_p) for sample in self.list_samples]
+        list_mul_sigma = [sample.mul_sigma for sample in self.list_samples]
         ## get indicies
         sorted_indicies = np.argsort(list_sum_error_rp)         #error: small->large
         # sorted_indicies = np.argsort(list_sum_error_rp)[::-1]   #error: large->small
+        # sorted_indicies = np.argsort(list_mul_sigma)            #sigma: small->large
+        # sorted_indicies = np.argsort(list_mul_sigma)[::-1]      #sigma: large->small
         ## sort
         self.list_samples = [self.list_samples[index] for index in sorted_indicies]
 
