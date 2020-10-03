@@ -21,8 +21,8 @@ class DataTransform():
         self.setNumImages(img_path_list)
         rand_img_list, camera_angle = self.randomize_img_order(img_path_list)
         combined_img_tensor = self.combineImages(rand_img_list)
-        acc_numpy = acc_numpy.astype(np.float32)
         rot_acc_numpy = self.rotateVector(acc_numpy, camera_angle)  #ToDo
+        rot_acc_numpy = rot_acc_numpy.astype(np.float32)
         rot_acc_numpy = rot_acc_numpy / np.linalg.norm(rot_acc_numpy)
         acc_tensor = torch.from_numpy(rot_acc_numpy)
         return combined_img_tensor, acc_tensor
