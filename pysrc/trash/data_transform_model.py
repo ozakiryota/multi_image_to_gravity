@@ -18,29 +18,16 @@ class DataTransform():
         ])
 
     def __call__(self, img_path_list, acc_numpy):
-        self.setNumImages(img_path_list)
-        rand_img_list, camera_angle = self.randomize_img_order(img_path_list)
-        combined_img_tensor = self.combineImages(rand_img_list)
+        combined_img_tensor = self.combineImages(img_path_list)
         acc_numpy = acc_numpy.astype(np.float32)
-        rot_acc_numpy = self.rotateVector(acc_numpy, camera_angle)  #ToDo
-        rot_acc_numpy = rot_acc_numpy / np.linalg.norm(rot_acc_numpy)
-        acc_tensor = torch.from_numpy(rot_acc_numpy)
+        acc_numpy = acc_numpy / np.linalg.norm(acc_numpy)
+        acc_tensor = torch.from_numpy(acc_numpy)
+
         return combined_img_tensor, acc_tensor
 
-    def setNumImages(self, img_path_list):
+    def combineImages(self, img_path_list):
         if self.num_images < 0:
             self.num_images = len(img_path_list)
-
-    def randomize_img_order(self, img_path_list):
-        slide = random.randint(0, len(img_path_list)-1)
-        rand_img_list = [img_path_list[-len(img_path_list)+i+slide] for i in range(len(img_path_list))]
-        camera_angle = 2*math.pi/len(img_path_list)*slide
-        camera_angle = -camera_angle	#NEU->NEU
-        # print("slide = ", slide)
-        # print("camera_angle/math.pi*180 = ", camera_angle/math.pi*180)
-        return rand_img_list, camera_angle
-
-    def combineImages(self, img_path_list):
         for i in range(self.num_images):
             img_tensor = self.img_transform(Image.open(img_path_list[i]))
             if i == 0:
@@ -48,15 +35,6 @@ class DataTransform():
             else:
                 combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
         return combined_img_tensor
-
-    def rotateVector(self, acc_numpy, camera_angle):
-        rot = np.array([
-    	    [math.cos(-camera_angle), -math.sin(-camera_angle), 0.0],
-    	    [math.sin(-camera_angle), math.cos(-camera_angle), 0.0],
-    	    [0.0, 0.0, 1.0]
-    	])
-        rot_acc_numpy = np.dot(rot, acc_numpy)
-        return rot_acc_numpy
 
     # def getConcatH(self, img_l, img_r):
     #     dst = Image.new('RGB', (img_l.width + img_r.width, img_l.height))
@@ -78,7 +56,7 @@ class DataTransform():
 #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_288.jpg"
 # ]
 # ## label
-# acc_list = [1, 0, 0]
+# acc_list = [0, 0, 1]
 # acc_numpy = np.array(acc_list)
 # ## transform
 # transform = DataTransform(resize, mean, std)
