@@ -35,7 +35,7 @@ class DataTransform():
         slide = random.randint(0, len(img_path_list)-1)
         rand_img_list = [img_path_list[-len(img_path_list)+i+slide] for i in range(len(img_path_list))]
         camera_angle = 2*math.pi/len(img_path_list)*slide
-        camera_angle = -camera_angle	#NEU->NEU
+        # camera_angle = -camera_angle	#NED->NEU
         # print("slide = ", slide)
         # print("camera_angle/math.pi*180 = ", camera_angle/math.pi*180)
         return rand_img_list, camera_angle
@@ -46,7 +46,8 @@ class DataTransform():
             if i == 0:
                 combined_img_tensor = img_tensor
             else:
-                combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
+                # combined_img_tensor = torch.cat((combined_img_tensor, img_tensor), dim=2)
+                combined_img_tensor = torch.cat((img_tensor, combined_img_tensor), dim=2)
         return combined_img_tensor
 
     def rotateVector(self, acc_numpy, camera_angle):
@@ -72,10 +73,10 @@ class DataTransform():
 # ## image
 # img_path_list = [
 #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",
-#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_72.jpg",
-#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_144.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_288.jpg",
 #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_216.jpg",
-#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_288.jpg"
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_144.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_72.jpg"
 # ]
 # ## label
 # acc_list = [1, 0, 0]
@@ -95,7 +96,7 @@ class DataTransform():
 # print("saved: ", save_path)
 # ## imshow
 # for i in range(len(img_path_list)):
-#     plt.subplot2grid((2, len(img_path_list)), (0, i))
+#     plt.subplot2grid((2, len(img_path_list)), (0, len(img_path_list)-i-1))
 #     plt.imshow(Image.open(img_path_list[i]))
 # plt.subplot2grid((2, len(img_path_list)), (1, 0), colspan=len(img_path_list))
 # plt.imshow(img_trans_numpy)

@@ -57,7 +57,9 @@ class OriginalNet(nn.Module):
         return x
 
 ##### test #####
-# import data_transform_model
+# import sys
+# sys.path.append('../')
+# from common import data_transform_model
 # ## image
 # img_path_list = [
 #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",

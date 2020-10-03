@@ -12,7 +12,7 @@ def makeDatapathList(rootpath, csv_name):
             for i in range(3, len(row)):
                 row[i] = os.path.join(rootpath, row[i])
                 camera_angle = 2*math.pi/len(row[3:])*(i-3)
-                camera_angle = -camera_angle    #NED->NEU
+                # camera_angle = -camera_angle    #NED->NEU
                 rot_acc_list = rotateVector(row[:3], camera_angle)
                 data = rot_acc_list + [row[i]]
                 data_list.append(data)

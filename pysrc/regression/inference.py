@@ -8,9 +8,12 @@ import torch
 from torchvision import models
 import torch.nn as nn
 
-import make_datapath_list
-import data_transform_model
-import dataset_model
+import sys
+sys.path.append('../')
+
+from common import make_datapath_list
+from common import data_transform_model
+from common import dataset_model
 import network
 
 class Sample:
