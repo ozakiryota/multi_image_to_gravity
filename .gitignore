@@ -4,6 +4,5 @@ graph/*
 
 pysrc/regression_multi_nn_inference
 pysrc/regression_test
-pysrc/_regression_single_image_train
 
 !.gitkeep
