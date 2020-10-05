@@ -18,7 +18,6 @@ class DataTransform():
 
     def __call__(self, img_path_list, acc_numpy):
         angle_deg = random.uniform(-10.0, 10.0)
-        angle_deg = -45  #TEST
         angle_rad = angle_deg / 180 * math.pi
         ## image
         img_pil = Image.open(img_path_list[0])
