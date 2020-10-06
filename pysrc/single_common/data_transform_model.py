@@ -22,7 +22,6 @@ class DataTransform():
         ## image
         img_pil = Image.open(img_path_list[0])
         is_mirror = bool(random.getrandbits(1))
-        print(is_mirror)
         if is_mirror:
             img_pil = ImageOps.mirror(img_pil)
         rot_img_pil = img_pil.rotate(angle_deg)
