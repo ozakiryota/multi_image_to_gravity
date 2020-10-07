@@ -219,8 +219,8 @@ def main():
     csv_name = "imu_camera.csv"
     batch_size = 10
     str_optimizer = "Adam"  #"SGD" or "Adam"
-    lr_cnn = 1e-5
-    lr_fc = 1e-4
+    lr_cnn = 1e-6
+    lr_fc = 1e-5
     num_epochs = 50
     weights_path = "../../weights/regression1cam.pth"
     ## train
