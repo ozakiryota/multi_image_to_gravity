@@ -115,9 +115,9 @@ class TrainModel:
         return optimizer
 
     def getStrHyperparameter(self, resize, mean_element, std_element, str_optimizer, lr_cnn, lr_fc, batch_size):
-        str_hyperparameter = "finetunemle" \
+        str_hyperparameter = "mle" \
             + str(self.num_images) + "images" \
-            + str(len(self.dataloaders_dict["train"].dataset)) + "train" \
+            + str(len(self.dataloaders_dict["train"].dataset)) + "finetune" \
             + str(len(self.dataloaders_dict["val"].dataset)) + "val" \
             + str(resize) + "resize" \
             + str(mean_element) + "mean" \
