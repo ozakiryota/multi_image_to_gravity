@@ -214,8 +214,8 @@ def main():
     mean_element = 0.5
     std_element = 0.5
     num_images = -1
-    train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
-    val_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
+    train_rootpath = "../../../dataset_image_to_gravity/stick/campus_cww"
+    val_rootpath = "../../../dataset_image_to_gravity/stick/dkan_outdoor"
     csv_name = "imu_camera.csv"
     batch_size = 10
     str_optimizer = "Adam"  #"SGD" or "Adam"
