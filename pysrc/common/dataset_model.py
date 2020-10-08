@@ -5,9 +5,10 @@ import numpy as np
 import torch
 
 class OriginalDataset(data.Dataset):
-    def __init__(self, data_list, transform):
+    def __init__(self, data_list, transform, phase):
         self.data_list = data_list
         self.transform = transform
+        self.phase = phase
 
     def __len__(self):
         return len(self.data_list)
@@ -18,13 +19,15 @@ class OriginalDataset(data.Dataset):
         acc_list = [float(num) for num in acc_str_list]
         acc_numpy = np.array(acc_list)
 
-        img_trans, acc_trans = self.transform(img_path_list, acc_numpy)
+        img_trans, acc_trans = self.transform(img_path_list, acc_numpy, phase=self.phase)
 
         return img_trans, acc_trans
 
 ##### test #####
-# import make_datapath_list
-# import data_transform_model
+# import sys
+# sys.path.append('../')
+# from common_single import make_datapath_list
+# from common_single import data_transform_model
 # ## list
 # train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
 # val_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
@@ -38,11 +41,13 @@ class OriginalDataset(data.Dataset):
 # ## dataset
 # train_dataset = OriginalDataset(
 #     data_list=train_list,
-#     transform=data_transform_model.DataTransform(resize, mean, std)
+#     transform=data_transform_model.DataTransform(resize, mean, std),
+#     phase="train"
 # )
 # val_dataset = OriginalDataset(
 #     data_list=val_list,
-#     transform=data_transform_model.DataTransform(resize, mean, std)
+#     transform=data_transform_model.DataTransform(resize, mean, std),
+#     phase="val"
 # )
 # ## print
 # index = 0

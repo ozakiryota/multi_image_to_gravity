@@ -16,24 +16,29 @@ class DataTransform():
             transforms.Normalize(mean, std)
         ])
 
-    def __call__(self, img_path_list, acc_numpy):
-        angle_deg = random.uniform(-10.0, 10.0)
-        angle_rad = angle_deg / 180 * math.pi
-        ## image
+    def __call__(self, img_path_list, acc_numpy, phase="train"):
         img_pil = Image.open(img_path_list[0])
-        is_mirror = bool(random.getrandbits(1))
-        if is_mirror:
-            img_pil = ImageOps.mirror(img_pil)
-        rot_img_pil = img_pil.rotate(angle_deg)
-        rot_img_tensor = self.img_transform(rot_img_pil)
-        ## acc
-        if is_mirror:
-            acc_numpy[1] = -acc_numpy[1]
-        rot_acc_numpy = self.rotateVector(acc_numpy, angle_rad)
-        rot_acc_numpy = rot_acc_numpy.astype(np.float32)
-        rot_acc_numpy = rot_acc_numpy / np.linalg.norm(rot_acc_numpy)
-        rot_acc_tensor = torch.from_numpy(rot_acc_numpy)
-        return rot_img_tensor, rot_acc_tensor
+        if phase == "train":
+            ## mirror
+            is_mirror = bool(random.getrandbits(1))
+            if is_mirror:
+                ## image
+                img_pil = ImageOps.mirror(img_pil)
+                ## acc
+                acc_numpy[1] = -acc_numpy[1]
+            ## rotate
+            angle_deg = random.uniform(-10.0, 10.0)
+            angle_rad = angle_deg / 180 * math.pi
+            ## image
+            img_pil = img_pil.rotate(angle_deg)
+            ## acc
+            acc_numpy = self.rotateVector(acc_numpy, angle_rad)
+        ## to tensor
+        img_tensor = self.img_transform(img_pil)
+        acc_numpy = acc_numpy.astype(np.float32)
+        acc_numpy = acc_numpy / np.linalg.norm(acc_numpy)
+        acc_tensor = torch.from_numpy(acc_numpy)
+        return img_tensor, acc_tensor
 
     def rotateVector(self, acc_numpy, angle):
         rot = np.array([
@@ -62,7 +67,7 @@ class DataTransform():
 # acc_numpy = np.array(acc_list)
 # ## transform
 # transform = DataTransform(resize, mean, std)
-# img_trans, acc_trans = transform(img_path_list, acc_numpy)
+# img_trans, acc_trans = transform(img_path_list, acc_numpy, phase="train")
 # print("acc_trans = ", acc_trans)
 # ## tensor -> numpy
 # img_trans_numpy = img_trans.numpy().transpose((1, 2, 0))  #(rgb, h, w) -> (h, w, rgb)

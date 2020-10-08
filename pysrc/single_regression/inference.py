@@ -81,7 +81,8 @@ class InferenceModel:
         ## dataset
         dataset = dataset_model.OriginalDataset(
             data_list=self.datapath_list,
-            transform=self.data_transform
+            transform=self.data_transform,
+            phase="val"
         )
         ## dataloader
         dataloader = torch.utils.data.DataLoader(
@@ -200,7 +201,7 @@ class InferenceModel:
     def showResult(self):
         plt.figure()
         h = 5
-        w = 2
+        w = 10
         for i in range(len(self.list_samples)):
             self.list_samples[i].printData()
             if i < h*w:
