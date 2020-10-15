@@ -61,11 +61,13 @@ class TrainModel:
         ## dataset
         train_dataset = dataset_model.OriginalDataset(
             data_list=train_list,
-            transform=self.data_transform
+            transform=self.data_transform,
+            phase="train"
         )
         val_dataset = dataset_model.OriginalDataset(
             data_list=val_list,
-            transform=self.data_transform
+            transform=self.data_transform,
+            phase="val"
         )
         ## dataloader
         train_dataloader = torch.utils.data.DataLoader(

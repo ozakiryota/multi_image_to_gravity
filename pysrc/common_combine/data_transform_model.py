@@ -17,14 +17,16 @@ class DataTransform():
             transforms.Normalize(mean, std)
         ])
 
-    def __call__(self, img_path_list, acc_numpy):
+    def __call__(self, img_path_list, acc_numpy, phase="train"):
         self.setNumImages(img_path_list)
-        rand_img_list, camera_angle = self.randomize_img_order(img_path_list)
-        combined_img_tensor = self.combineImages(rand_img_list)
-        rot_acc_numpy = self.rotateVector(acc_numpy, camera_angle)  #ToDo
-        rot_acc_numpy = rot_acc_numpy.astype(np.float32)
-        rot_acc_numpy = rot_acc_numpy / np.linalg.norm(rot_acc_numpy)
-        acc_tensor = torch.from_numpy(rot_acc_numpy)
+        camera_angle = 0.0
+        if phase == "train":
+            img_path_list, camera_angle = self.randomize_img_order(img_path_list)
+            acc_numpy = self.rotateVector(acc_numpy, camera_angle)
+        combined_img_tensor = self.combineImages(img_path_list)
+        acc_numpy = acc_numpy.astype(np.float32)
+        acc_numpy = acc_numpy / np.linalg.norm(acc_numpy)
+        acc_tensor = torch.from_numpy(acc_numpy)
         return combined_img_tensor, acc_tensor
 
     def setNumImages(self, img_path_list):
@@ -33,12 +35,12 @@ class DataTransform():
 
     def randomize_img_order(self, img_path_list):
         slide = random.randint(0, len(img_path_list)-1)
-        rand_img_list = [img_path_list[-len(img_path_list)+i+slide] for i in range(len(img_path_list))]
+        rand_img_path_list = [img_path_list[-len(img_path_list)+i+slide] for i in range(len(img_path_list))]
         camera_angle = 2*math.pi/len(img_path_list)*slide
         # camera_angle = -camera_angle	#NED->NEU
         # print("slide = ", slide)
         # print("camera_angle/math.pi*180 = ", camera_angle/math.pi*180)
-        return rand_img_list, camera_angle
+        return rand_img_path_list, camera_angle
 
     def combineImages(self, img_path_list):
         for i in range(self.num_images):
@@ -90,7 +92,7 @@ class DataTransform():
 # img_trans_numpy = np.clip(img_trans_numpy, 0, 1)
 # print("img_trans_numpy.shape = ", img_trans_numpy.shape)
 # ## save
-# save_path = "../../keep/augmented_example.jpg"
+# save_path = "../../save/augmented_example.jpg"
 # img_pil = Image.fromarray(np.uint8(255*img_trans_numpy))
 # img_pil.save(save_path)
 # print("saved: ", save_path)

@@ -25,7 +25,8 @@ def show_inputs(inputs):
     plt.show()
 
 ## list
-train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
+# train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
+train_rootpath = "../../../dataset_image_to_gravity/AirSim/4cam/Neighborhood_1000samples"
 val_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
 csv_name = "imu_camera.csv"
 train_list = make_datapath_list.makeDatapathList(train_rootpath, csv_name)
@@ -39,11 +40,13 @@ std = ([0.5, 0.5, 0.5])
 ## dataset
 train_dataset = dataset_model.OriginalDataset(
     data_list=train_list,
-    transform=data_transform_model.DataTransform(resize, mean, std)
+    transform=data_transform_model.DataTransform(resize, mean, std),
+    phase="train"
 )
 val_dataset = dataset_model.OriginalDataset(
     data_list=val_list,
-    transform=data_transform_model.DataTransform(resize, mean, std)
+    transform=data_transform_model.DataTransform(resize, mean, std),
+    phase="val"
 )
 
 # dataloader
