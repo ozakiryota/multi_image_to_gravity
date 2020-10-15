@@ -15,6 +15,10 @@ class OriginalNet(nn.Module):
             num_fc_in_features = 26112
         elif num_images == 5:
             num_fc_in_features = 125440
+        elif num_images == 4 and resize == 112:
+            num_fc_in_features = 21504
+        elif num_images == 4:
+            num_fc_in_features = 100352
         elif num_images == 1 and resize == 112:
             num_fc_in_features = 4608
         elif num_images == 1:
@@ -59,7 +63,7 @@ class OriginalNet(nn.Module):
 ##### test #####
 # import sys
 # sys.path.append('../')
-# from common import data_transform_model
+# from common_combine import data_transform_model
 # ## image
 # img_path_list = [
 #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",
@@ -71,10 +75,6 @@ class OriginalNet(nn.Module):
 # ## label
 # acc_list = [0, 0, 1]
 # acc_numpy = np.array(acc_list)
-# ## network
-# net = OriginalNet(len(img_path_list))
-# print(net)
-# list_cnn_param_value, list_fc_param_value = net.getParamValueList()
 # # print(list_fc_param_value)
 # ## trans param
 # resize = 224
@@ -84,6 +84,10 @@ class OriginalNet(nn.Module):
 # ## transform
 # transform = data_transform_model.DataTransform(resize, mean, std)
 # img_trans, _ = transform(img_path_list, acc_numpy)
+# ## network
+# net = OriginalNet(len(img_path_list), resize)
+# print(net)
+# list_cnn_param_value, list_fc_param_value = net.getParamValueList()
 # ## prediction
 # inputs = img_trans.unsqueeze_(0)
 # print("inputs.size() = ", inputs.size())
