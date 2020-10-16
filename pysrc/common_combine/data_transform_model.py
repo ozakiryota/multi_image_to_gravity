@@ -69,16 +69,22 @@ class DataTransform():
 
 ##### test #####
 # ## trans param
-# resize = 224
+# resize = 112
 # mean = ([0.5, 0.5, 0.5])
 # std = ([0.5, 0.5, 0.5])
 # ## image
+# # img_path_list = [
+# #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",
+# #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_288.jpg",
+# #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_216.jpg",
+# #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_144.jpg",
+# #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_72.jpg"
+# # ]
 # img_path_list = [
-#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",
-#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_288.jpg",
-#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_216.jpg",
-#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_144.jpg",
-#     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_72.jpg"
+#     "../../../dataset_image_to_gravity/AirSim/4cam/example/camera_0.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/4cam/example/camera_270.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/4cam/example/camera_180.jpg",
+#     "../../../dataset_image_to_gravity/AirSim/4cam/example/camera_90.jpg"
 # ]
 # ## label
 # acc_list = [1, 0, 0]
@@ -92,7 +98,7 @@ class DataTransform():
 # img_trans_numpy = np.clip(img_trans_numpy, 0, 1)
 # print("img_trans_numpy.shape = ", img_trans_numpy.shape)
 # ## save
-# save_path = "../../save/augmented_example.jpg"
+# save_path = "../../save/combine_example.jpg"
 # img_pil = Image.fromarray(np.uint8(255*img_trans_numpy))
 # img_pil.save(save_path)
 # print("saved: ", save_path)
