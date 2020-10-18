@@ -53,8 +53,7 @@ class InferenceModel:
     def __init__(self,
             resize, mean_element, std_element, num_images,
             rootpath, csv_name, batch_size,
-            weights_path,
-            th_mul_sigma):
+            weights_path):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("self.device = ", self.device)
         self.num_images = num_images
@@ -64,13 +63,10 @@ class InferenceModel:
         self.net = self.getNetwork(resize, weights_path)
         ## list
         self.list_samples = []
-        self.list_selected_samples = []
         self.list_inputs = []
         self.list_labels = []
         self.list_outputs = []
         self.list_cov = []
-        ## threshold
-        self.th_mul_sigma = th_mul_sigma
 
     def getDataTransform(self, resize, mean_element, std_element):
         mean = ([mean_element, mean_element, mean_element])
@@ -98,7 +94,7 @@ class InferenceModel:
         dataloader = torch.utils.data.DataLoader(
             dataset,
             batch_size=batch_size,
-            shuffle=False
+            shuffle=True
         )
         return dataloader
 
@@ -142,7 +138,7 @@ class InferenceModel:
         loss_all = loss_all / len(self.dataloader.dataset)
         print("Loss: {:.4f}".format(loss_all))
         ## compute error
-        mae, var, ave_mul_sigma, selected_mae, selected_var = self.computeAttitudeError()
+        mae, var, ave_mul_sigma = self.computeAttitudeError()
         ## sort
         self.sortSamples()
         ## show result & set graph
@@ -157,10 +153,6 @@ class InferenceModel:
         print("var [deg^2] = ", var)
         ## average multiplied sigma
         print("ave_mul_sigma [m^3/s^6] = ", ave_mul_sigma)
-        ## selected MAE & Var
-        print("number of the selected samples = ", len(self.list_selected_samples), " / ", len(self.list_samples))
-        print("selected mae [deg] = ", selected_mae)
-        print("selected var [deg^2] = ", selected_var)
         ## graph
         plt.tight_layout()
         plt.show()
@@ -173,7 +165,6 @@ class InferenceModel:
 
     def computeAttitudeError(self):
         list_errors = []
-        list_selected_errors = []
         list_mul_sigma = []
         for i in range(len(self.list_labels)):
             ## error
@@ -192,19 +183,12 @@ class InferenceModel:
                 label_r, label_p, output_r, output_p, error_r, error_p
             )
             self.list_samples.append(sample)
-            ## judge
-            if mul_sigma < self.th_mul_sigma:
-                self.list_selected_samples.append(sample)
-                list_selected_errors.append([error_r, error_p])
         arr_errors = np.array(list_errors)
-        arr_selected_errors = np.array(list_selected_errors)
         print("arr_errors.shape = ", arr_errors.shape)
         mae = self.computeMAE(arr_errors/math.pi*180.0)
         var = self.computeVar(arr_errors/math.pi*180.0)
         ave_mul_sigma = np.mean(list_mul_sigma, axis=0)
-        selected_mae = self.computeMAE(arr_selected_errors/math.pi*180.0)
-        selected_var = self.computeVar(arr_selected_errors/math.pi*180.0)
-        return mae, var, ave_mul_sigma, selected_mae, selected_var
+        return mae, var, ave_mul_sigma
 
     def accToRP(self, acc):
         r = math.atan2(acc[1], acc[2])
@@ -235,7 +219,7 @@ class InferenceModel:
     def showResult(self):
         plt.figure()
         h = 5
-        w = 10
+        w = 2
         for i in range(len(self.list_samples)):
             self.list_samples[i].printData()
             if i < h*w:
@@ -254,13 +238,11 @@ def main():
     csv_name = "imu_camera.csv"
     batch_size = 10
     weights_path = "../../weights/mle.pth"
-    th_mul_sigma = 0.0001
     ## infer
     inference_model = InferenceModel(
         resize, mean_element, std_element, num_images,
         rootpath, csv_name, batch_size,
-        weights_path,
-        th_mul_sigma
+        weights_path
     )
     inference_model.infer()
 
