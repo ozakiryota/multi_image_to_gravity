@@ -46,12 +46,12 @@ class Sample:
 
 class InferenceModel:
     def __init__(self,
-            resize, mean_element, std_element,
+            resize, mean_element, std_element, num_images,
             rootpath, csv_name, batch_size,
             weights_path):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("self.device = ", self.device)
-        self.num_images = 1
+        self.num_images = num_images
         self.data_transform = self.getDataTransform(resize, mean_element, std_element)
         self.datapath_list = []
         self.dataloader = self.getDataloader(rootpath, csv_name, batch_size)
@@ -70,8 +70,13 @@ class InferenceModel:
 
     def getDataloader(self, rootpath, csv_name, batch_size):
         ## list
-        self.datapath_list = make_datapath_list.makeDatapathList(rootpath, csv_name)
+        if self.num_images < 0:
+            self.datapath_list = make_datapath_list.makeDatapathList(rootpath, csv_name)
+        else:
+            self.datapath_list = make_datapath_list.makeDatapathList(rootpath, csv_name, self.num_images)
         ## get number of input images
+        if self.num_images < 0:
+            self.num_images = len(self.datapath_list[0][3:])
         print("self.num_images = ", self.num_images)
         ## dataset
         dataset = dataset_model.OriginalDataset(
@@ -88,7 +93,7 @@ class InferenceModel:
         return dataloader
 
     def getNetwork(self, resize, weights_path):
-        net = network.OriginalNet(self.num_images, resize=resize, use_pretrained=False)
+        net = network.OriginalNet(1, resize=resize, use_pretrained=False)
         print(net)
         net.to(self.device)
         net.eval()
@@ -210,13 +215,14 @@ def main():
     resize = 224
     mean_element = 0.5
     std_element = 0.5
+    num_images = -1
     rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
     csv_name = "imu_camera.csv"
     batch_size = 10
     weights_path = "../../weights/regression1cam.pth"
     ## infer
     inference_model = InferenceModel(
-        resize, mean_element, std_element,
+        resize, mean_element, std_element, num_images,
         rootpath, csv_name, batch_size,
         weights_path
     )

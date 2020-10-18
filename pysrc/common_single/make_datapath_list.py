@@ -3,13 +3,15 @@ import os
 import numpy as np
 import math
 
-def makeDatapathList(rootpath, csv_name):
+def makeDatapathList(rootpath, csv_name, num_images=-1):
     csvpath = os.path.join(rootpath, csv_name)
     with open(csvpath) as csvfile:
         reader = csv.reader(csvfile)
         data_list = []
         for row in reader:
-            for i in range(3, len(row)):
+            if num_images < 0:
+                num_images = len(row[3:])
+            for i in range(3, 3+num_images):
                 row[i] = os.path.join(rootpath, row[i])
                 camera_angle = 2*math.pi/len(row[3:])*(i-3)
                 # camera_angle = -camera_angle    #NED->NEU
