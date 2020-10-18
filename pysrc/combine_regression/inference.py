@@ -81,7 +81,8 @@ class InferenceModel:
         ## dataset
         dataset = dataset_model.OriginalDataset(
             data_list=self.datapath_list,
-            transform=self.data_transform
+            transform=self.data_transform,
+            phase="val"
         )
         ## dataloader
         dataloader = torch.utils.data.DataLoader(

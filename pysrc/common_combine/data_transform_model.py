@@ -69,7 +69,7 @@ class DataTransform():
 
 ##### test #####
 # ## trans param
-# resize = 112
+# resize = 224
 # mean = ([0.5, 0.5, 0.5])
 # std = ([0.5, 0.5, 0.5])
 # ## image
