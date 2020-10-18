@@ -1,6 +1,7 @@
 weights/*
 runs
 graph/*
+save/*
 
 pysrc/regression_multi_nn_inference
 pysrc/regression_test
