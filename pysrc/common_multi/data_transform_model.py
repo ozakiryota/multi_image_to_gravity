@@ -16,7 +16,7 @@ class DataTransform():
             transforms.Normalize(mean, std)
         ])
 
-    def __call__(self, img_path_list, acc_numpy):
+    def __call__(self, img_path_list, acc_numpy, phase):
         img_tensor_list = self.transformImages(img_path_list)
         acc_numpy = acc_numpy.astype(np.float32)
         acc_numpy = acc_numpy / np.linalg.norm(acc_numpy)

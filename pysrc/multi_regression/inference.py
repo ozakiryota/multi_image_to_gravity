@@ -78,7 +78,8 @@ class InferenceModel:
         ## dataset
         dataset = dataset_model.OriginalDataset(
             data_list=self.datapath_list,
-            transform=self.data_transform
+            transform=self.data_transform,
+            phase="val"
         )
         ## dataloader
         dataloader = torch.utils.data.DataLoader(
@@ -149,7 +150,6 @@ class InferenceModel:
         ave_outputs = torch.empty(0)
         for i in range(len(inputs)):
             outputs = self.net(inputs[i])
-            print("outputs.size() = ", outputs.size())
             if i == 0:
                 ave_outputs = outputs
             else:
@@ -162,8 +162,8 @@ class InferenceModel:
 
     def rotateAcc(self, acc, camera_angle):
         rot = torch.tensor([
-    	    [math.cos(-camera_angle), -math.sin(-camera_angle), 0.0],
-    	    [math.sin(-camera_angle), math.cos(-camera_angle), 0.0],
+    	    [math.cos(camera_angle), -math.sin(camera_angle), 0.0],
+    	    [math.sin(camera_angle), math.cos(camera_angle), 0.0],
     	    [0.0, 0.0, 1.0]
     	], dtype=torch.float32).to(self.device)
         rot_acc = torch.mm(rot, torch.transpose(acc, 0, 1))
