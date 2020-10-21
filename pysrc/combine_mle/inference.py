@@ -225,9 +225,9 @@ class InferenceModel:
         list_sum_error_rp = [abs(sample.error_r) + abs(sample.error_p) for sample in self.list_samples]
         list_mul_sigma = [sample.mul_sigma for sample in self.list_samples]
         ## get indicies
-        # sorted_indicies = np.argsort(list_sum_error_rp)         #error: small->large
+        sorted_indicies = np.argsort(list_sum_error_rp)         #error: small->large
         # sorted_indicies = np.argsort(list_sum_error_rp)[::-1]   #error: large->small
-        sorted_indicies = np.argsort(list_mul_sigma)            #sigma: small->large
+        # sorted_indicies = np.argsort(list_mul_sigma)            #sigma: small->large
         # sorted_indicies = np.argsort(list_mul_sigma)[::-1]      #sigma: large->small
         ## sort
         self.list_samples = [self.list_samples[index] for index in sorted_indicies]
@@ -235,7 +235,7 @@ class InferenceModel:
     def showResult(self):
         plt.figure()
         h = 5
-        w = 5
+        w = 10
         for i in range(len(self.list_samples)):
             self.list_samples[i].printData()
             if i < h*w:
@@ -246,14 +246,14 @@ class InferenceModel:
 
 def main():
     ## hyperparameters
-    resize = 112
+    resize = 224
     mean_element = 0.5
     std_element = 0.5
     num_images = -1
-    rootpath = "../../../dataset_image_to_gravity/AirSim/4cam/Neighborhood_1000samples"
+    rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
     csv_name = "imu_camera.csv"
-    batch_size = 20
-    weights_path = "../../weights/mle4images10000train1000val112resize0.5mean0.5stdAdam1e-05lrcnn0.0001lrfc200batch200epoch.pth"
+    batch_size = 10
+    weights_path = "../../weights/mle.pth"
     th_mul_sigma = 0.0001
     ## infer
     inference_model = InferenceModel(

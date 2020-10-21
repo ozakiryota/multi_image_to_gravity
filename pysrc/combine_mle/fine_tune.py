@@ -11,10 +11,11 @@ from tensorboardX import SummaryWriter
 import sys
 sys.path.append('../')
 
-from common_single import make_datapath_list
-from common_single import data_transform_model
+from common_multi import make_datapath_list
+from common_combine import data_transform_model
 from common import dataset_model
-from combine_regression import network
+import network
+import criterion_model
 
 class TrainModel:
     def __init__(self,
@@ -116,7 +117,7 @@ class TrainModel:
         return optimizer
 
     def getStrHyperparameter(self, resize, mean_element, std_element, str_optimizer, lr_cnn, lr_fc, batch_size):
-        str_hyperparameter = "regression" \
+        str_hyperparameter = "mle" \
             + str(self.num_images) + "images" \
             + str(len(self.dataloaders_dict["train"].dataset)) + "finetune" \
             + str(len(self.dataloaders_dict["val"].dataset)) + "val" \
@@ -190,8 +191,8 @@ class TrainModel:
         print ("training_time: ", mins, " [min] ", secs, " [sec]")
 
     def computeLoss(self, outputs, labels):
-        criterion = nn.MSELoss()
-        loss = criterion(outputs, labels)
+        criterion = criterion_model.CriterionModel()
+        loss = criterion.computeLoss(outputs, labels, self.device)
         return loss
 
     def saveParam(self):
@@ -205,7 +206,7 @@ class TrainModel:
         plt.plot(range(len(record_loss_val)), record_loss_val, label="Validation")
         plt.legend()
         plt.xlabel("Epoch")
-        plt.ylabel("Loss [m^2/s^4]")
+        plt.ylabel("Loss [m/s^2]")
         plt.title("loss: train=" + str(record_loss_train[-1]) + ", val=" + str(record_loss_val[-1]))
         graph.savefig("../../graph/" + self.str_hyperparameter + ".jpg")
         plt.show()
@@ -216,15 +217,15 @@ def main():
     mean_element = 0.5
     std_element = 0.5
     num_images = -1
-    train_rootpath = "../../../dataset_image_to_gravity/stick/4cam/campus"
-    val_rootpath = "../../../dataset_image_to_gravity/stick/4cam/dkan_outdoor"
+    train_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/train"
+    val_rootpath = "../../../dataset_image_to_gravity/AirSim/5cam/val"
     csv_name = "imu_camera.csv"
     batch_size = 10
     str_optimizer = "Adam"  #"SGD" or "Adam"
     lr_cnn = 1e-6
     lr_fc = 1e-5
     num_epochs = 50
-    weights_path = "../../weights/regression1cam.pth"
+    weights_path = "../../weights/mle5cam.pth"
     ## train
     train_model = TrainModel(
         resize, mean_element, std_element, num_images,

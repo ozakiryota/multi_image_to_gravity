@@ -224,7 +224,7 @@ def main():
     lr_cnn = 1e-6
     lr_fc = 1e-5
     num_epochs = 50
-    weights_path = "../../weights/regression.pth"
+    weights_path = "../../weights/regression5cam.pth"
     ## train
     train_model = TrainModel(
         resize, mean_element, std_element, num_images,
