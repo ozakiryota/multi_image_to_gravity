@@ -158,6 +158,7 @@ class InferenceModel:
         ## average multiplied sigma
         print("ave_mul_sigma [m^3/s^6] = ", ave_mul_sigma)
         ## selected MAE & Var
+        print("th_mul_sigma = ", self.th_mul_sigma)
         print("number of the selected samples = ", len(self.list_selected_samples), " / ", len(self.list_samples))
         print("selected mae [deg] = ", selected_mae)
         print("selected var [deg^2] = ", selected_var)
