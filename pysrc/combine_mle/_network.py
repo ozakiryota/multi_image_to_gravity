@@ -11,7 +11,18 @@ class OriginalNet(nn.Module):
 
         vgg = models.vgg16(pretrained=use_pretrained)
         self.features = vgg.features
-        num_fc_in_features = (resize//32)*(num_images*resize//32)*512
+        if num_images == 5 and resize == 112:
+            num_fc_in_features = 26112
+        elif num_images == 5:
+            num_fc_in_features = 125440
+        elif num_images == 4 and resize == 112:
+            num_fc_in_features = 21504
+        elif num_images == 4:
+            num_fc_in_features = 100352
+        elif num_images == 1 and resize == 112:
+            num_fc_in_features = 4608
+        elif num_images == 1:
+            num_fc_in_features = 25088
         self.fc = nn.Sequential(
             nn.Linear(num_fc_in_features, 100),
             nn.ReLU(inplace=True),
@@ -52,7 +63,7 @@ class OriginalNet(nn.Module):
 ##### test #####
 # import sys
 # sys.path.append('../')
-# from common_combine import data_transform_model
+# from common import data_transform_model
 # ## image
 # img_path_list = [
 #     "../../../dataset_image_to_gravity/AirSim/5cam/example/camera_0.jpg",
